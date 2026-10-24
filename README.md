@@ -154,3 +154,16 @@ git remote add origin https://github.com/<your-username>/<your-repo-name>.git
 git branch -M main
 git push -u origin main
 ```
+
+---
+
+## 📤 Pushing to GitHub
+
+To publish this project to your GitHub account:
+
+```bash
+git remote add origin https://github.com/<your-username>/<your-repo-name>.git
+git branch -M main
+git push -u origin main
+```
+
