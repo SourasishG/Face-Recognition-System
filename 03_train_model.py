@@ -48,23 +48,21 @@ for person in os.listdir(train_dir):
         embeddings_list.append(embedding)
         labels_list.append(person)
 
-# Calculate average centroid embedding for each registered person
+# Organize embeddings by person (multi-condition support: glasses, angles, lighting)
 user_database = {}
 for emb, label in zip(embeddings_list, labels_list):
     if label not in user_database:
         user_database[label] = []
     user_database[label].append(emb)
 
-centroid_database = {}
+# Convert each person's embeddings into a NumPy array for fast vector comparison
 for label in user_database:
-    centroid_database[label] = np.mean(user_database[label], axis=0)
-    # L2 normalize the centroid vector
-    centroid_database[label] = centroid_database[label] / np.linalg.norm(centroid_database[label])
+    user_database[label] = np.array(user_database[label])
 
 # Save model and embeddings
 os.makedirs("models", exist_ok=True)
 save_data = {
-    "centroids": centroid_database,
+    "database": user_database,
     "all_embeddings": np.array(embeddings_list),
     "all_labels": labels_list
 }
@@ -72,6 +70,5 @@ save_data = {
 with open("models/face_model.pkl", "wb") as f:
     pickle.dump(save_data, f)
 
-print(f"[SUCCESS] Trained model on {len(labels_list)} faces across {len(centroid_database)} identities.")
+print(f"[SUCCESS] Trained model on {len(labels_list)} faces across {len(user_database)} identities.")
 print("[SUCCESS] Saved face model to 'models/face_model.pkl'.")
-

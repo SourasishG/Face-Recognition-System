@@ -16,8 +16,9 @@ model = InceptionResnetV1(pretrained="vggface2").eval().to(device)
 with open("models/face_model.pkl", "rb") as f:
     saved_data = pickle.load(f)
 
-database = saved_data["centroids"]
+database = saved_data["database"]
 threshold = 0.65  # Cosine similarity threshold for identifying registered users
+pad = 20          # Padding to capture glasses and full face boundary
 
 # Load face detector
 cascade_path = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
@@ -39,8 +40,14 @@ while True:
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
 
     for (x, y, w, h) in faces:
-        # Crop face and resize to 160x160
-        face_crop = frame[y:y+h, x:x+w]
+        # Crop face with padding for spectacles and hair/jawline
+        h_img, w_img = frame.shape[:2]
+        y1 = max(0, y - pad)
+        y2 = min(h_img, y + h + pad)
+        x1 = max(0, x - pad)
+        x2 = min(w_img, x + w + pad)
+        face_crop = frame[y1:y2, x1:x2]
+
         if face_crop.size == 0:
             continue
 
@@ -55,27 +62,29 @@ while True:
             emb = model(tensor).cpu().numpy()[0]
             emb = emb / np.linalg.norm(emb)
 
-        # Find best matching registered person
+        # Find best matching registered person across all photos
         best_name = "Unknown"
         best_score = -1.0
 
-        for name, centroid in database.items():
-            similarity = float(np.dot(emb, centroid))
-            if similarity > best_score:
-                best_score = similarity
+        for name, user_embs in database.items():
+            scores = np.dot(user_embs, emb)
+            user_max = float(np.max(scores))
+            if user_max > best_score:
+                best_score = user_max
                 best_name = name
 
         # Check if similarity meets threshold
+        match_percent = int(best_score * 100)
         if best_score >= threshold:
-            label = f"{best_name} ({best_score:.2f})"
+            label = f"{best_name} ({match_percent}%)"
             box_color = (0, 255, 0)  # Green for recognized person
         else:
-            label = f"Unknown ({best_score:.2f})"
+            label = f"Unknown ({match_percent}%)"
             box_color = (0, 0, 255)  # Red for unknown visitor
 
         # Draw bounding box and name tag
-        cv2.rectangle(frame, (x, y), (x + w, y + h), box_color, 2)
-        cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, box_color, 2)
+        cv2.rectangle(frame, (x1, y1), (x2, y2), box_color, 2)
+        cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, box_color, 2)
 
     cv2.imshow("Live Face Recognition", frame)
 
@@ -84,4 +93,3 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
-

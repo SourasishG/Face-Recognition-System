@@ -14,11 +14,11 @@ if not torch.cuda.is_available():
 
 model = InceptionResnetV1(pretrained="vggface2").eval().to(device)
 
-# Load trained centroids and model
+# Load trained database
 with open("models/face_model.pkl", "rb") as f:
     saved_data = pickle.load(f)
 
-database = saved_data["centroids"]
+database = saved_data["database"]
 threshold = 0.65  # Cosine similarity threshold for unknown rejection
 
 test_dir = os.path.join("dataset_split", "test")
@@ -49,15 +49,15 @@ for person in os.listdir(test_dir):
             emb = model(tensor).cpu().numpy()[0]
             emb = emb / np.linalg.norm(emb)
 
-        # Compare with registered centroids
+        # Compare with registered embeddings (best matching photo for each person)
         best_match = "unknown"
         best_score = -1.0
 
-        for name, centroid in database.items():
-            # Cosine similarity is dot product of normalized vectors
-            similarity = float(np.dot(emb, centroid))
-            if similarity > best_score:
-                best_score = similarity
+        for name, user_embs in database.items():
+            scores = np.dot(user_embs, emb)
+            user_max = float(np.max(scores))
+            if user_max > best_score:
+                best_score = user_max
                 best_match = name
 
         # Decision threshold for unknown faces
@@ -98,4 +98,3 @@ plt.title("Face Recognition Confusion Matrix")
 plt.tight_layout()
 plt.savefig("models/confusion_matrix.png")
 print("\n[SUCCESS] Confusion matrix saved as 'models/confusion_matrix.png'.")
-
