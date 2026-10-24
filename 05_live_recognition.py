@@ -32,6 +32,9 @@ while True:
         print("[ERROR] Failed to capture frame from webcam.")
         break
 
+    # Flip horizontally so it behaves like a natural mirror
+    frame = cv2.flip(frame, 1)
+
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
 
