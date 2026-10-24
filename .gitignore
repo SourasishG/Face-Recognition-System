@@ -1,0 +1,30 @@
+# Python Virtual Environment
+venv/
+env/
+.venv/
+
+# Cache directories
+__pycache__/
+*.pyc
+.cache/
+
+# Large files & personal dataset images (ignored from git)
+dataset/*
+!dataset/.gitkeep
+
+dataset_split/train/*
+!dataset_split/train/.gitkeep
+
+dataset_split/test/*
+!dataset_split/test/.gitkeep
+
+dataset_split/unknown_test/*
+!dataset_split/unknown_test/.gitkeep
+
+# Model weights
+models/*.pkl
+!models/.gitkeep
+
+# Operating System files
+.DS_Store
+Thumbs.db
