@@ -74,3 +74,4 @@ with open("models/face_model.pkl", "wb") as f:
 
 print(f"[SUCCESS] Trained model on {len(labels_list)} faces across {len(centroid_database)} identities.")
 print("[SUCCESS] Saved face model to 'models/face_model.pkl'.")
+

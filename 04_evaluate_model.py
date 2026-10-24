@@ -98,3 +98,4 @@ plt.title("Face Recognition Confusion Matrix")
 plt.tight_layout()
 plt.savefig("models/confusion_matrix.png")
 print("\n[SUCCESS] Confusion matrix saved as 'models/confusion_matrix.png'.")
+

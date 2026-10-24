@@ -128,3 +128,4 @@ Instead of raw pixels, FaceNet maps faces into a 512-dimensional vector space wh
 
 ### 3. Rejecting Unknown Persons
 If the maximum cosine similarity to any registered user is less than the threshold ($0.65$), the system marks the face as `"Unknown"` rather than guessing a wrong person.
+
