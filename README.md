@@ -57,9 +57,7 @@ Face Recognition System/
   * **Auto-Append Mode**: Running `01_collect_data.py` again appends new samples without overwriting previous photos. You can easily register 30 photos without glasses and 30 photos with glasses.
   * **Nearest-Sample Vector Matching**: Compares live faces against all individual condition vectors of the user, achieving high recognition confidence whether you wear glasses, change hairstyles, or adjust lighting.
 * **Rejecting Unknown Strangers**: Uses an empirical Cosine Similarity threshold ($0.65$). Any unregistered face is automatically labeled **"Unknown"** with a red bounding box.
-* **Intelligent Registration Verification (De-Duplication & Mismatch Protection)**:
-  * **Duplicate Prevention**: Blocks someone from registering their face under two different names (`Different Name, Same Face`).
-  * **Identity Mismatch Protection**: Blocks a stranger from overriding or polluting an existing user's dataset (`Same Name, Different Face`).
+* **Identity Management**: Uses identity-specific folders under `dataset/` with auto-append logic so you can easily register multiple individuals or add diverse poses/glasses.
 
 ---
 
