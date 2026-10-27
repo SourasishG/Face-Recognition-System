@@ -58,5 +58,5 @@ for person in persons:
 
     print(f"[INFO] {person}: {len(train_files)} train images, {len(test_files)} test images.")
 
-print("[SUCCESS] Dataset preprocessing and train/test split completed.")
+print("[SUCCESS] Dataset preprocessing and train/test split is completed.")
 
