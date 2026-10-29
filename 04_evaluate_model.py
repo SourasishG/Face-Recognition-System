@@ -21,6 +21,8 @@ y_pred = []
 
 for person in os.listdir(test_dir):
     p_dir = os.path.join(test_dir, person)
+    if not os.path.isdir(p_dir):
+        continue
     for filename in os.listdir(p_dir):
         img = cv2.imread(os.path.join(p_dir, filename))
         if img is None:
